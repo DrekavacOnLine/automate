@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Project for storing Postman tests",
   "scripts": {
-    "api-test-automation": "newman run tests/Automate.postman_collection.json --reporters cli,junit,html,htmlextra --reporter-junit-export rpt.xml --reporter-html-export report/index.html --reporter-htmlextra-export report/rpt_ex.html"
+    "api-test-automation": "newman run tests/Automate.postman_collection.json -e env/FEATURE3-LAT.postman_environment.json --reporters cli,junit,html,htmlextra --reporter-junit-export rpt.xml --reporter-html-export report/index.html --reporter-htmlextra-export report/rpt_ex.html"
   },
   "author": "Stefan Dusan",
   "dependencies": {
