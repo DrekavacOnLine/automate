@@ -1,0 +1,12 @@
+{
+  "name": "postman-newman-jenkins",
+  "version": "1.0.0",
+  "description": "Project for storing Postman tests",
+  "scripts": {
+    "api-test-automation": "newman run tests/Automate.postman_collection.json --reporters cli,junit,html,htmlextra --reporter-junit-export rpt.xml --reporter-html-export report/index.html --reporter-htmlextra-export report/rpt_ex.html"
+  },
+  "author": "Stefan Dusan",
+  "dependencies": {
+    "newman": "^4.5.1"
+  }
+}

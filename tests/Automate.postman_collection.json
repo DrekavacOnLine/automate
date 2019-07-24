@@ -1,0 +1,247 @@
+{
+	"info": {
+		"_postman_id": "53cfcf5b-638a-43da-acfb-656637e1167b",
+		"name": "Automate",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "aPayment overview",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d0b7df17-eb4f-4b34-90d3-487e2d1c09ee",
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.be.success;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json; ",
+							"});",
+							"",
+							"const bcNo = pm.environment.get(\"BC_NO\");",
+							"const orunId = pm.environment.get(\"ORUN_ID\");",
+							"const payments = pm.response.json();",
+							"",
+							"pm.test(\"Contract has at least one payment\", function () {",
+							"   payments.length > 0;",
+							"});",
+							"",
+							"if(payments.length <= 0) {",
+							"    console.log(`There are no payments configured for BC_NO: ${bcNo}, ORUN_ID: ${orunId}`);",
+							"} else {",
+							"    console.log(`The payments for BC_NO: ${bcNo}, ORUN_ID: ${orunId} are`);",
+							"    console.log(payments);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}"
+					},
+					{
+						"key": "Cache-Control",
+						"value": "no-cache"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Host",
+						"value": "feature3-wls-lat.ctr.ebs.crealogix.net:8003"
+					},
+					{
+						"key": "Postman-Token",
+						"value": "850e3874-18d5-4a08-bebc-3ee7ecf982c9,8a81eb5e-284c-4fde-8a86-8cd620a2e018"
+					},
+					{
+						"key": "User-Agent",
+						"value": "PostmanRuntime/7.13.0"
+					},
+					{
+						"key": "accept-encoding",
+						"value": "gzip, deflate"
+					},
+					{
+						"key": "cache-control",
+						"value": "no-cache"
+					},
+					{
+						"key": "content-length",
+						"value": "2"
+					},
+					{
+						"key": "cookie",
+						"value": "JSESSIONID=P7r4hX-Pap2B7ursV5nKuPnRsCqDRakYPxbFGfFFNt1N7JO68nQJ!-66247764; BRSINFO_env=date%3D1558947659780%3BwindowSize%3D784x524; BRSINFO_plugins=pdf-viewer%3B; BRSINFO_screen=width%3D1920%3Bheight%3D1080%3BcolorDepth%3D24; BRSINFO_screenColorDepth=24; BRSINFO_os=5.0%20(Windows%20NT%2010.0%3B%20Win64%3B%20x64)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Postman%2F7.1.1%20Chrome%2F59.0.3071.115%20Electron%2F1.8.8%20Safari%2F537.36; BRSINFO_osPlatform=Win32; BRSINFO_browser=Netscape; BRSINFO_cpuInfo=undefined; BRSINFO_sysLang=en-GB; DEA_CONTROL=SESSION%3DNEWID%26SESSION_TIMEOUT%3D7200; AL_CONTROL=SESSION%3DNEWID%26SESSION_TIMEOUT%3D7200"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"paymentType\": \"ACCOUNT_TRANSFER\"\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/banking-api/payment/payments/{{BC_NO}}/v1/payment/search",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"banking-api",
+						"payment",
+						"payments",
+						"{{BC_NO}}",
+						"v1",
+						"payment",
+						"search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "aCreate SWIFT payment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "380b3871-2a51-43bf-a0a6-e3c32104f2e9",
+						"exec": [
+							"// check if headers are properly defined\r",
+							"pm.test('Content-Type header is correct', () => pm.request.to.have.header('Content-Type', 'application/json; charset=UTF-8'));\r",
+							"pm.test('Accept header is correct', () => pm.request.to.have.header('Accept', 'application/json, application/hal+json'));\r",
+							"\r",
+							"// check if payment is created\r",
+							"pm.test(\"Status Code is 201\", () => pm.response.to.have.status(201));\r",
+							"\r",
+							"// check if payment is created\r",
+							"if (pm.response.to.have.status(201)){\r",
+							"    var responseData = JSON.parse(responseBody);\r",
+							"    pm.globals.set(\"newPaymentID\", responseData.paymentId);\r",
+							"    console.log(\"New payment ID: \" + pm.globals.get(\"newPaymentID\"));\r",
+							"}\r",
+							"else {\r",
+							"    console.log(\"Failed to create payment with ID:\" + pm.globals.get(\"newPaymentID\"));\r",
+							"    pm.globals.unset(\"newPaymentID\");\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "content-type",
+						"value": "application/json; charset=UTF-8"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json, application/hal+json"
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}",
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman."
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"storeOnly\": false,\n\t\"locked\": false,       \n\t\"categoryPurposeCode\": \"nMAN\",\n    \"paymentInformation\": {\n\t\t\"endToEndId\": \"1304182224-0000002\",\n\t\t\"instructedAmount\": {\n           \"currency\": {\n           \"code\": \"EUR\"\n            },\n            \"value\": 406.19\n    \t},\n        \"remittanceInformation\": {\n            \"unstructured\": \"Standard payment 2105-2\",\n            \"structured\":  \"VRG VIRT Lohnverrechnung\"\n        },\n        \"instructionIdentification\": \"CLVL-1-17082815400103-1\",\n    \t\"requestedExecutionDate\": \"2019-10-10\",\n        \"instructionPriority\": \"NORMAL\",\n        \"creditor\": {\n            \"name\": \"Postman Newman\",\n            \"address\": {\n            \t\"adrLine1\": \"Newman\",\n            \t\"adrLine2\": \"Automated\",\n            \t\"buildingNm\": \"Test\",\n            \t\"postalCode\": 8080,\n            \t\"townName\": \"Jenkins\",\n            \t\"country\": \"CH\"\n        \t}\n        },\n        \"creditorAccountNo\": \"771000031506\",\n        \"creditorAgent\": {\n    \t\t\"name1\": \"string\",\n    \t\t\"name2\": \"string\",\n    \t\t\"street\": \"string\",\n    \t\t\"city\": \"string\",\n    \t\t\"country\": \"CH\",\n    \t\t\"bic\": \"CRESCHZZ80A\",\n    \t\t\"bankCode\": \"UBSWCHZH80A\"\n    \t},\n        \"debtor\": {\n            \"name\": \"Newman Jenkins\",\n            \"address\": {\n            \t\"adrLine1\": \"Schachenallee 31\",\n            \t\"adrLine2\": \"string\",\n            \t\"buildingNm\": \"string\",\n            \t\"postalCode\": 5004,\n            \t\"townName\": \"Aarau\",\n            \t\"country\": \"CH\"\n        \t}\n        },\n        \"debtorAccountNo\": \"CH4512312001000030903\"\n    }\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/banking-api/payment/swift/{{BC_NO}}/v2/credittransfer",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"banking-api",
+						"payment",
+						"swift",
+						"{{BC_NO}}",
+						"v2",
+						"credittransfer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "aDelete SWIFT payment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "96ee9651-4e6e-4a83-a257-55d56e136859",
+						"exec": [
+							"// check if payment is deleted\r",
+							"pm.test(\"Status Code is 204\", () => pm.response.to.have.status(204));\r",
+							"\r",
+							"// check if response is empty\r",
+							"pm.test(\"Response is empty\", function () {\r",
+							"    responseBody = null\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "content-type",
+						"value": "application/json; charset=UTF-8"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, application/hal+json"
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}",
+						"warning": "This is a duplicate header and will be overridden by the Authorization header generated by Postman."
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"storeOnly\": false,\r\n  \"locked\": false,\r\n  \"categoryPurposeCode\": \"string\",\r\n  \"paymentInformation\": {\r\n    \"instructionIdentification\": \"string\",\r\n    \"endToEndId\": \"string\",\r\n    \"debtor\": {\r\n      \"name\": \"Freddy Hinz\",\r\n      \"adrLine1\": \"Schachenallee 31\",\r\n      \"adrLine2\": \"string\",\r\n      \"buildingNm\": \"string\",\r\n      \"postalCode\": 5004,\r\n      \"townName\": \"Aarau\",\r\n      \"country\": \"CH\"\r\n    },\r\n    \"debtorAccount\": {\r\n      \"accountNo\": \"CH4512312001000030903\",\r\n      \"bankCode\": \"CLXNCHZZMDB\"\r\n    },\r\n    \"creditor\": {\r\n      \"name\": \"Max Creditor\",\r\n      \"adrLine1\": \"Kreissparkasse fdsdfs\",\r\n      \"adrLine2\": \"AM WOLLHAUS 14\",\r\n      \"buildingNm\": \"string\",\r\n      \"postalCode\": 2234,\r\n      \"townName\": \"Maxtown\",\r\n      \"country\": \"CH\"\r\n    },\r\n\"creditorAccount\": {\r\n\t  \"accountNo\": \"CH4908465123456789012\",\r\n\t  \"bankCode\": \"BSILCH22XXX\"\r\n\t},\r\n    \"instructedAmount\": {\r\n      \"currency\": {\r\n        \"code\": \"CHF\"\r\n      },\r\n      \"value\": 9299292.22\r\n    },\r\n    \"requestedExecutionDate\": \"2019-08-26\",\r\n    \"instructionPriority\": \"NORMAL\",\r\n    \"remittanceInformation\": {\r\n      \"unstructured\": \"Amazon payment 12345\",\r\n      \"structured\": \"string\"\r\n    }\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/banking-api/payment/swift/12312/v2/credittransfer/{{newPaymentID}}",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"banking-api",
+						"payment",
+						"swift",
+						"12312",
+						"v2",
+						"credittransfer",
+						"{{newPaymentID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
